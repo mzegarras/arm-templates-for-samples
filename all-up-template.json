@@ -1,30 +1,3 @@
-# arm-templates-for-samples
-For soliciting feedback on ARM templates
-
-Example command:
-```bash
-az deployment create --name <name-of-deployment> --template-file all-up-template.json --resource-group <name-or-id-of-group> --subscription <app-guid> --parameters appId=<msa-app-guid> appSecret="<msa-app-password>" botId=<id-or-name-of-bot> newServerFarmName=<name-of-server-farm> newWebAppName=<name-of-web-app>
-```
-
-Expected order of commands when starting from sample:
-```bash
-# 1. User plays around with sample, makes code changes
-
-# 2. User decides to provision resources via ARM
-az deployment create ...
-
-# 3. User retrieves necessary IIS/Kudu files
-az bot prepare-deploy ...
-
-# 4. User zips up code manually
-
-# 5. User deploys code to Azure using az webapp
-az webapp deployment source config-zip ...
-```
-
-### Inline ARM template ([link](/all-up-template.json))
-
-```json
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
@@ -114,7 +87,6 @@ az webapp deployment source config-zip ...
                         {
                             "comments": "Create a new Server Farm",
                             "type": "Microsoft.Web/serverfarms",
-                            "condition": "[variables('serverFarmName')]",
                             "name": "[variables('serverFarmName')]",
                             "apiVersion": "2018-02-01",
                             "location": "[variables('resourcesLocation')]",
@@ -194,59 +166,3 @@ az webapp deployment source config-zip ...
         }
     ]
 }
-```
-
-### Parameters:
-```json
-"parameters": {
-    "groupLocation": {
-        "defaultValue": "westus",
-        "type": "string"
-    },
-    "groupName": {
-        "type": "string"
-    },
-    "appId": {
-        "type": "string"
-    },
-    "appSecret": {
-        "type": "string",
-        "defaultValue": ""
-    },
-    "botId": {
-        "type": "string"
-    },
-    "botSku": {
-        "defaultValue": "F0",
-        "type": "string"
-    },
-    "newServerFarmName": {
-        "type": "string"
-    },
-    "newServerFarmSku": {
-        "type": "object",
-        "defaultValue": {
-            "name": "S1",
-            "tier": "Standard",
-            "size": "S1",
-            "family": "S",
-            "capacity": 1
-        }
-    },
-    "newServerFarmLocation": {
-        "type": "string",
-        "defaultValue": "westus"
-    },
-    "newWebAppName": {
-        "type": "string",
-        "defaultValue": ""
-    },
-    "alwaysBuildOnDeploy": {
-        "type": "bool",
-        "defaultValue": "false",
-        "metadata": {
-            "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
-        }
-    }
-}
-```
