@@ -82,7 +82,7 @@ az webapp deployment source config-zip ...
         "serverFarmName": "[if(variables('useExistingServerFarm'), parameters('existingServerFarm'), parameters('newServerFarmName'))]",
         "resourcesLocation": "[parameters('newServerFarmLocation')]",
         "webAppName": "[if(empty(parameters('newWebAppName')), parameters('botId'), parameters('newWebAppName'))]",
-        "siteHost": "[concat(parameters('newWebAppName'), '.azurewebsites.net')]",
+        "siteHost": "[concat(variables('webAppName'), '.azurewebsites.net')]",
         "botEndpoint": "[concat('https://', variables('siteHost'), '/api/messages')]"
     },
     "resources": [
@@ -168,53 +168,53 @@ az webapp deployment source config-zip ...
 
 ### Parameters:
 ```json
-    "parameters": {
-        "appId": {
-            "type": "string"
-        },
-        "appSecret": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "botId": {
-            "type": "string"
-        },
-        "botSku": {
-            "defaultValue": "F0",
-            "type": "string"
-        },
-        "newServerFarmName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "newServerFarmSku": {
-            "type": "object",
-            "defaultValue": {
-                "name": "S1",
-                "tier": "Standard",
-                "size": "S1",
-                "family": "S",
-                "capacity": 1
-            }
-        },
-        "newServerFarmLocation": {
-            "type": "string",
-            "defaultValue": "westus"
-        },
-        "existingServerFarm": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "newWebAppName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "buildOnZipDeploy": {
-            "type": "bool",
-            "defaultValue": "false",
-            "metadata": {
-                "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
-            }
+"parameters": {
+    "appId": {
+        "type": "string"
+    },
+    "appSecret": {
+        "type": "string",
+        "defaultValue": ""
+    },
+    "botId": {
+        "type": "string"
+    },
+    "botSku": {
+        "defaultValue": "F0",
+        "type": "string"
+    },
+    "newServerFarmName": {
+        "type": "string",
+        "defaultValue": ""
+    },
+    "newServerFarmSku": {
+        "type": "object",
+        "defaultValue": {
+            "name": "S1",
+            "tier": "Standard",
+            "size": "S1",
+            "family": "S",
+            "capacity": 1
+        }
+    },
+    "newServerFarmLocation": {
+        "type": "string",
+        "defaultValue": "westus"
+    },
+    "existingServerFarm": {
+        "type": "string",
+        "defaultValue": ""
+    },
+    "newWebAppName": {
+        "type": "string",
+        "defaultValue": ""
+    },
+    "alwaysBuildOnDeploy": {
+        "type": "bool",
+        "defaultValue": "false",
+        "metadata": {
+            "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
         }
     }
+}
 ```
