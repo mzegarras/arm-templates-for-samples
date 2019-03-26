@@ -2,26 +2,31 @@
 
 Example command:
 ```bash
-az deployment create --name <name-of-deployment> --template-file all-up-template.json --subscription <subscription-guid> --parameters appId=<msa-app-guid> appSecret="<msa-app-password>" botId=<id-or-name-of-bot> newServerFarmName=<name-of-server-farm> newWebAppName=<name-of-web-app> groupName=myGroupName
+az deployment create --name "<name-of-deployment>" --template-file "all-up-template.json" --subscription "<subscription-guid>" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newServerFarmName="<name-of-server-farm>" newWebAppName="<name-of-web-app>" groupName="<new-group-name>"
 ```
 
-We recommend provisioning Azure resources through ARM templates via the [Azure CLI][ARM-CLI]. 
-
-> *It is also possible to deploy ARM templates via the [Azure Portal][ARM-Portal], [PowerShell][ARM-PowerShell] and the [REST API][ARM-REST].*
+We recommend provisioning Azure resources through ARM templates via the [Azure CLI][ARM-CLI]. It is also possible to deploy ARM templates via the [Azure Portal][ARM-Portal], [PowerShell][ARM-PowerShell] and the [REST API][ARM-REST].
 
   [ARM-CLI]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy-cli
   [ARM-Portal]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy-portal
   [ARM-PowerShell]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy
   [ARM-REST]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy-rest
 
+___
+
+## Bot deployment via Azure CLI
 When deploying an ARM template via the Azure CLI, you will perform the following actions:
 
 #### 1. Create an App registration
 To create an App registration via the Azure CLI, perform the following command:
 ```bash
-# Replace "displayName" and "AtLeastSixteenCharacters_0"
+# Replace "displayName" and "AtLeastSixteenCharacters_0" with your specified values.
+# The --password argument must be at least 16 characters in length, and have at least 1 lowercase char, 1 uppercase char, 1 special char, and 1 special char (e.g. !?-_+=)
 az ad app create --display-name "displayName" --password "AtLeastSixteenCharacters_0" --available-to-other-tenants
 ```
+
+This command will output JSON with the key "appId", save the value of this key for the ARM deployment, where it will be used for the `"appId"` parameter. The password provided will be used for the `"appSecret"` parameter.
+
 > *It is also possible to create App registrations via [apps.dev.microsoft.com][Apps-List] or via the [Azure portal][Preview-Portal]. Be sure to also create a password when creating the application.*
 
   [Apps-List]: https://apps.dev.microsoft.com/#/appList
@@ -29,11 +34,11 @@ az ad app create --display-name "displayName" --password "AtLeastSixteenCharacte
 
 #### 2. Create a resource group and the Azure resources
 ```bash
-az deployment create --name myDeployment --template-file all-up-template.json --parameters groupName=MyNewResourceGroup ...
+# Pass in the path to the ARM template for the --template-file argument.
+az deployment create --name "myDeployment" --template-file "all-up-template.json" --parameters groupName="MyNewResourceGroup" ...
 ```
 
 #### 3. Retrieve or create necessary IIS/Kudu files via `az bot`
-
 ```bash
 # For C# bots, it's necessary to provide the path to the .csproj file relative to --code-dir. This can be performed via the --proj-file-path argument
 az bot prepare-deploy --code-dir ".." --lang <Csharp or Node>
