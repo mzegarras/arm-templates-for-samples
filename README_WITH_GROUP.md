@@ -7,11 +7,21 @@ az group deployment create --name <name-of-deployment> --template-file template-
 
 Expected order of commands when starting from sample:
 ```bash
-az group deployment
-az bot prepare-deploy
-# User zips up code manually
-az webapp deployment source config-zip
+# 1. User plays around with sample, makes code changes
+
+# 2. User decides to provision resources via ARM, already has Resource Group
+az group deployment ...
+
+# 3. User retrieves necessary IIS/Kudu files
+az bot prepare-deploy ...
+
+# 4. User zips up code manually
+
+# 5. User deploys code to Azure using az webapp
+az webapp deployment source config-zip ...
 ```
+
+### Inline ARM template ([link](/template-with-preexisting-group.json))
 
 ```json
 {
@@ -57,6 +67,13 @@ az webapp deployment source config-zip
         "newWebAppName": {
             "type": "string",
             "defaultValue": ""
+        },
+        "alwaysBuildOnDeploy": {
+            "type": "bool",
+            "defaultValue": "false",
+            "metadata": {
+                "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
+            }
         }
     },
     "variables": {
@@ -102,11 +119,7 @@ az webapp deployment source config-zip
                         },
                         {
                             "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
-                            "value": "false"
-                        },
-                        {
-                            "name": "BotEnv",
-                            "value": "[parameters('botEnv')]"
+                            "value": "[parameters('alwaysBuildOnDeploy')]"
                         },
                         {
                             "name": "MicrosoftAppId",
@@ -155,46 +168,53 @@ az webapp deployment source config-zip
 
 ### Parameters:
 ```json
-"parameters": {
-    "appId": {
-        "type": "string"
-    },
-    "appSecret": {
-        "type": "string",
-        "defaultValue": ""
-    },
-    "botId": {
-        "type": "string"
-    },
-    "botSku": {
-        "defaultValue": "F0",
-        "type": "string"
-    },
-    "newServerFarmName": {
-        "type": "string",
-        "defaultValue": ""
-    },
-    "newServerFarmSku": {
-        "type": "object",
-        "defaultValue": {
-            "name": "S1",
-            "tier": "Standard",
-            "size": "S1",
-            "family": "S",
-            "capacity": 1
+    "parameters": {
+        "appId": {
+            "type": "string"
+        },
+        "appSecret": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "botId": {
+            "type": "string"
+        },
+        "botSku": {
+            "defaultValue": "F0",
+            "type": "string"
+        },
+        "newServerFarmName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "newServerFarmSku": {
+            "type": "object",
+            "defaultValue": {
+                "name": "S1",
+                "tier": "Standard",
+                "size": "S1",
+                "family": "S",
+                "capacity": 1
+            }
+        },
+        "newServerFarmLocation": {
+            "type": "string",
+            "defaultValue": "westus"
+        },
+        "existingServerFarm": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "newWebAppName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "buildOnZipDeploy": {
+            "type": "bool",
+            "defaultValue": "false",
+            "metadata": {
+                "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
+            }
         }
-    },
-    "newServerFarmLocation": {
-        "type": "string",
-        "defaultValue": "westus"
-    },
-    "existingServerFarm": {
-        "type": "string",
-        "defaultValue": ""
-    },
-    "newWebAppName": {
-        "type": "string",
-        "defaultValue": ""
     }
-}
 ```

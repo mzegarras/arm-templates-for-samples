@@ -41,6 +41,13 @@
         "newWebAppName": {
             "type": "string",
             "defaultValue": ""
+        },
+        "alwaysBuildOnDeploy": {
+            "type": "bool",
+            "defaultValue": "false",
+            "metadata": {
+                "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
+            }
         }
     },
     "variables": {
@@ -86,11 +93,7 @@
                         },
                         {
                             "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
-                            "value": "false"
-                        },
-                        {
-                            "name": "BotEnv",
-                            "value": "[parameters('botEnv')]"
+                            "value": "[parameters('alwaysBuildOnDeploy')]"
                         },
                         {
                             "name": "MicrosoftAppId",
