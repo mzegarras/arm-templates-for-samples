@@ -73,5 +73,19 @@ If successful, it should yield a response like this:
 }
 ```
 
+### 4. See the LUIS Cognitive Services' keys
+
+```bash
+az cognitiveservices account keys list -n "NameOfLuisResoruce" --subscription "subscription-guid" -g "ResourceGroupName"
+```
+
+This will return an object that looks like this:
+```json
+{
+  "key1": "9a69####dc8f####8eb4####399f####",
+  "key2": "####f99e####4b1a####fb3b####6b9f"
+}
+```
+
   [LUIS-NPM]: https://www.npmjs.com/package/luis-apis
 
