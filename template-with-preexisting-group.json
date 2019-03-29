@@ -3,22 +3,37 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "appId": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Active Directory App ID, set as MicrosoftAppId in the Web App's Application Settings."
+            }
         },
         "appSecret": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Active Directory App Password, set as MicrosoftAppPassword in the Web App's Application Settings. Defaults to \"\"."
+            }
         },
         "botId": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "The globally unique and immutable bot ID. Also used to configure the displayName of the bot, which is mutable."
+            }
         },
         "botSku": {
             "defaultValue": "F0",
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "The pricing tier of the Bot Service Registration. Acceptable values are F0 and S1."
+            }
         },
         "newServerFarmName": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "The name of the new App Service Plan."
+            }
         },
         "newServerFarmSku": {
             "type": "object",
@@ -28,23 +43,35 @@
                 "size": "S1",
                 "family": "S",
                 "capacity": 1
+            },
+            "metadata": {
+                "description": "The SKU of the App Service Plan. Defaults to Standard values."
             }
         },
         "newServerFarmLocation": {
             "type": "string",
-            "defaultValue": "westus"
+            "defaultValue": "westus",
+            "metadata": {
+                "description": "The location of the App Service Plan. Defaults to \"westus\"."
+            }
         },
         "existingServerFarm": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of the existing App Service Plan/Server Farm used to create the Web App for the bot."
+            }
         },
         "newWebAppName": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "The globally unique name of the Web App. Defaults to the value passed in for \"botId\"."
+            }
         },
         "alwaysBuildOnDeploy": {
             "type": "bool",
-            "defaultValue": "false",
+            "defaultValue": false,
             "metadata": {
                 "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
             }
