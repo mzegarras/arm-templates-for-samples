@@ -25,24 +25,54 @@ ___
 
 ### 1. Create a new LUIS Cognitive Services resource on Azure via Azure CLI
 
+> _Note:_ <br/>
+> _If you don't have a Resource Group in your Azure subscription, you can create one through the Azure portal or through using:_
+> ```bash
+> az group create --subscription "AzureSubscriptionGuid" --location "westus" --name "ResourceGroupName"
+> ```
+> _To see a list of valid locations, use `az account list-locations`_
+
+
 ```bash
 # Use Azure CLI to create the LUIS Key resource on Azure
-az cognitiveservices account create --kind "luis" -n "newLuisResourceName" --sku "S0" -l "westus" --subscription "subscription-guid" -g "ResourceGroupName"
+az cognitiveservices account create --kind "luis" --name "NewLuisResourceName" --sku "S0" --location "westus" --subscription "AzureSubscriptionGuid" -g "ResourceGroupName"
 ```
 
-<!-- When we port to Azure CLI we can parameterize this JSON object so the user doesn't need to make a file -->
+The command will output a response similar to the JSON below:
+```json
+{
+  "endpoint": "https://westus.api.cognitive.microsoft.com/luis/v2.0",
+  "etag": "\"########-####-####-####-############\"",
+  "id": "/subscriptions/########-####-####-####-############/resourceGroups/ResourceGroupName/providers/Microsoft.CognitiveServices/accounts/NewLuisResourceName",
+  "internalId": "################################",
+  "kind": "luis",
+  "location": "westus",
+  "name": "NewLuisResourceName",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "ResourceGroupName",
+  "sku": {
+    "name": "S0",
+    "tier": null
+  },
+  "tags": null,
+  "type": "Microsoft.CognitiveServices/accounts"
+}
+```
+
+
+
 Take the output from the previous command and create a JSON file in the following format:
 ```json
 {
     "azureSubscriptionId": "00000000-0000-0000-0000-000000000000",
     "resourceGroup": "ResourceGroupName",
-    "accountName": "AccountName"
+    "accountName": "NewLuisResourceName"
 }
 ```
 
 ### 2. Retrieve ARM access token via Azure CLI
 ```bash
-az account get-access-token --subscription "subscription-guid"
+az account get-access-token --subscription "AzureSubscriptionGuid"
 ```
 
 This will return an object that looks like this:
@@ -50,7 +80,7 @@ This will return an object that looks like this:
 {
   "accessToken": "eyJ0eXAiOiJKVtokentokentokentokentokeng1dCI6Ik4tbEMwbi05REFMcXdodUhZbkhRNjNHZUNYYyIsItokenI6Ik4tbEMwbi05REFMcXdodUhZbkhRNjNHZUNYYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNTUzODc3MTUwLCJuYmYiOjE1NTM4NzcxNTAsImV4cCI6MTU1Mzg4MTA1MCwiX2NsYWltX25hbWVzIjp7Imdyb3VwcyI6InNyYzEifSwiX2NsYWltX3NvdXJjZXMiOnsic3JjMSI6eyJlbmRwb2ludCI6Imh0dHBzOi8vZ3JhcGgud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3L3VzZXJzL2ZmZTQyM2RkLWJhM2YtNDg0Ny04NjgyLWExNTI5MDA4MjM4Ny9nZXRNZW1iZXJPYmplY3RzIn19LCJhY3IiOiIxIiwiYWlvIjoiQVZRQXEvOEtBQUFBeGVUc201NDlhVHg4RE1mMFlRVnhGZmxxOE9RSC9PODR3QktuSmRqV1FqTkkwbmxLYzB0bHJEZzMyMFZ5bWZGaVVBSFBvNUFFUTNHL0FZNDRjdk01T3M0SEt0OVJkcE5JZW9WU0dzd0kvSkk9IiwiYW1yIjpbIndpYSIsIm1mYSJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImRldmljZWlkIjoiNDhmNDVjNjEtMTg3Zi00MjUxLTlmZWItMTllZGFkZmMwMmE3IiwiZmFtaWx5X25hbWUiOiJHdW0iLCJnaXZlbl9uYW1lIjoiU3RldmVuIiwiaXBhZGRyIjoiMTY3LjIyMC4yLjU1IiwibmFtZSI6IlN0ZXZlbiBHdW0iLCJvaWQiOiJmZmU0MjNkZC1iYTNmLTQ4NDctODY4Mi1hMTUyOTAwODIzODciLCJvbnByZW1fc2lkIjoiUy0xLTUtMjEtMjEyNzUyMTE4NC0xNjA0MDEyOTIwLTE4ODc5Mjc1MjctMjYwOTgyODUiLCJwdWlkIjoiMTAwMzdGRkVBMDQ4NjlBNyIsInJoIjoiSSIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6Ik1rMGRNMWszN0U5ckJyMjhieUhZYjZLSU85LXVFQVVkZFVhNWpkSUd1Nk0iLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1bmlxdWVfbmFtZSI6InN0Z3VtQG1pY3Jvc29mdC5jb20iLCJ1cG4iOiJzdGd1bUBtaWNyb3NvZnQuY29tIiwidXRpIjoiT2w2NGN0TXY4RVNEQzZZQWRqRUFtokenInZlciI6IjEuMCJ9.kFAsEilE0mlS1pcpqxf4rEnRKeYsehyk-gz-zJHUrE__oad3QjgDSBDPrR_ikLdweynxbj86pgG4QFaHURNCeE6SzrbaIrNKw-n9jrEtokenlosOxg_0l2g1LeEUOi5Q4gQREAU_zvSbl-RY6sAadpOgNHtGvz3Rc6FZRITfkckSLmsKAOFoh-aWC6tFKG8P52rtB0qVVRz9tovBeNqkMYL49s9ypduygbXNVwSQhm5JszeWDgrFuVFHBUP_iENCQYGQpEZf_KvjmX1Ur1F9Eh9nb4yI2gFlKncKNsQl-tokenK7-tokentokentokentokentokentokenatoken",
   "expiresOn": "2200-12-31 23:59:59.999999",
-  "subscription": "subscription-guid",
+  "subscription": "AzureSubscriptionGuid",
   "tenant": "tenant-guid",
   "tokenType": "Bearer"
 }
@@ -76,7 +106,7 @@ If successful, it should yield a response like this:
 ### 4. See the LUIS Cognitive Services' keys
 
 ```bash
-az cognitiveservices account keys list -n "NameOfLuisResoruce" --subscription "subscription-guid" -g "ResourceGroupName"
+az cognitiveservices account keys list --name "NewLuisResourceName" --subscription "AzureSubscriptionGuid" -g "ResourceGroupName"
 ```
 
 This will return an object that looks like this:

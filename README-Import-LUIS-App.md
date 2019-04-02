@@ -20,7 +20,7 @@ ___
 
 ### 1. Import the local LUIS application to luis.ai
 ```bash
-luis import application --region "LuisAppPublishRegion" --authoringKey "LuisAuthoringKey" --appName "CoreBot-FlightBooking" --in "./cognitiveModels/FlightBooking.json"
+luis import application --region "LuisAppAuthoringRegion" --authoringKey "LuisAuthoringKey" --appName "CoreBot-FlightBooking" --in "./cognitiveModels/FlightBooking.json"
 ```
 
 Outputs the following JSON:
@@ -42,15 +42,25 @@ Outputs the following JSON:
 }
 ```
 
+For the next step, you'll need the `"id"` value for `--appId` and the `"activeVersion"` value for `--versionId`.
+
 ### 2. Train the LUIS Application
 ```bash
-luis train version --region "LuisAppPublishRegion" --authoringKey "LuisAuthoringKey" --appId "LuisAppId" --versionId "LuisAppversion" --wait
+luis train version --region "LuisAppAuthoringRegion" --authoringKey "LuisAuthoringKey" --appId "LuisAppId" --versionId "LuisAppversion" --wait
 ```
 
 ### 3. Publish the LUIS Application
 ```bash
-luis publish version --region "LuisAppPublishRegion" --authoringKey "LuisAuthoringKey" --appId "LuisAppId" --versionId "LuisAppversion" --publishRegion "LuisAppPublishRegion"
+luis publish version --region "LuisAppAuthoringRegion" --authoringKey "LuisAuthoringKey" --appId "LuisAppId" --versionId "LuisAppversion" --publishRegion "LuisAppPublishRegion"
 ```
+
+> `--region` corresponds to the region you _author_ your application in. The regions available for this are "westus", "westeurope" and "australiaeast". <br/>
+> These regions correspond to the three available portals, https://luis.ai, https://eu.luis.ai, or https://au.luis.ai. <br/>
+> `--publishRegion` corresponds to the region of the endpoint you're publishing to, (e.g. "westus", "southeastasia", "westeurope", "brazilsouth"). <br/>
+> See the [reference docs][Endpoint-API] for a list of available publish/endpoint regions.
+
+  [Endpoint-API]: https://westus.dev.cognitive.microsoft.com/docs/services/5819c76f40a6350ce09de1ac/operations/5819c77140a63516d81aee78
+
 
 Outputs the following:
 ```json
