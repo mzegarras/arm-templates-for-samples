@@ -1,191 +1,125 @@
-## ARM template for use with preexisting Resource Group
+## Deploying via ARM template (with preexisting Resource Group)
 
-Example command with preexisting server farm:
+#### Example command with new App Service Plan/Server Farm:
 ```bash
-az group deployment create --name <name-of-deployment> --template-file template-with-preexisting-group.json --resource-group <name-or-id-of-group> --subscription <app-guid> --parameters appId=<msa-app-guid> appSecret="<msa-app-password>" botId=<id-or-name-of-bot> existingServerFarm=<name-of-apps-service-plan-in-group> newWebAppName=<name-of-web-app>
+az group deployment create --name "<name-of-deployment>" --resource-group "<name-of-resource-group>" --template-file "template-existing-group.json" --subscription "<subscription-guid>" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newWebAppName="<name-of-web-app>" alwaysBuildOnDeploy=false newServerFarmName="<name-of-server-farm>"
 ```
 
-Expected order of commands when starting from sample:
+#### Example command with preexisting App Service Plan/Server Farm:
 ```bash
-# 1. User plays around with sample, makes code changes
+# The difference between this example command and the previous command is
+# this command uses "existingServerFarm" as a parameter instead of "newServerFarmName"
 
-# 2. User decides to provision resources via ARM, already has Resource Group
-az group deployment ...
+# If both parameters are passed in, the ARM template provided will try to create a new Web App on the "existingServerFarm".
+az group deployment create --name "<name-of-deployment>" --resource-group "<name-of-resource-group>" --template-file "template-existing-group.json" --subscription "<subscription-guid>" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newWebAppName="<name-of-web-app>" alwaysBuildOnDeploy=false existingServerFarm="<name-of-server-farm>"
+```
 
-# 3. User retrieves necessary IIS/Kudu files
-az bot prepare-deploy ...
+We recommend provisioning Azure resources through ARM templates via the [Azure CLI][ARM-CLI]. It is also possible to deploy ARM templates via the [Azure Portal][ARM-Portal], [PowerShell][ARM-PowerShell] and the [REST API][ARM-REST].
 
-# 4. User zips up code manually
+To install the latest version of the Azure CLI visit [this page][Install-CLI].
 
-# 5. User deploys code to Azure using az webapp
+  [ARM-CLI]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy-cli
+  [ARM-Portal]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy-portal
+  [ARM-PowerShell]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy
+  [ARM-REST]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy-rest
+  [Install-CLI]: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
+
+___
+
+## Bot deployment via Azure CLI
+When deploying an ARM template via the Azure CLI, you will perform the following actions:
+
+#### 1. Create an App registration
+To create an App registration via the Azure CLI, perform the following command:
+```bash
+# Replace "displayName" and "AtLeastSixteenCharacters_0" with your specified values.
+# The --password argument must be at least 16 characters in length, and have at least 1 lowercase char, 1 uppercase char, 1 special char, and 1 special char (e.g. !?-_+=)
+az ad app create --display-name "displayName" --password "AtLeastSixteenCharacters_0" --available-to-other-tenants
+```
+
+This command will output JSON with the key "appId", save the value of this key for the ARM deployment, where it will be used for the `"appId"` parameter. The password provided will be used for the `"appSecret"` parameter.
+
+> *It is also possible to create App registrations via [apps.dev.microsoft.com][Apps-List] or via the [Azure portal][Preview-Portal]. Be sure to also create a password when creating the application.*
+
+  [Apps-List]: https://apps.dev.microsoft.com/#/appList
+  [Preview-Portal]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade
+
+#### 2. Create a resource group and the Azure resources
+```bash
+# Pass in the path to the ARM template for the --template-file argument.
+az group deployment create --name "myDeployment" --resource-group "myResourceGroup" --template-file "template-existing-group.json" --parameters newWebAppName="mynewwebapp" ...
+```
+
+> These instructions shows how to zipdeploy your code using `az webapp`. App Service's default behavior for zipdeploy is to not build the code or install any dependencies (e.g. you must zip up your binaries or your `node_modules` folder). If you do want the App service to build and/or install dependencies, add the optional parameter `"
+>
+> For more information on Kudu, visit their [GitHub repository][Kudu-Wiki].
+
+To see all available parameters and their descriptions, scroll down or click [here](#Parameters).
+
+  [Kudu-Wiki]: https://github.com/projectkudu/kudu/wiki
+
+#### 3. Retrieve or create necessary IIS/Kudu files via `az bot`
+
+*For C# bots this command is necessary if you want Kudu to build on deployment (e.g. `alwaysBuildOnDeploy=true`):*
+```bash
+# For C# bots, it's necessary to provide the path to the .csproj file relative to --code-dir. This can be performed via the --proj-file-path argument
+az bot prepare-deploy --lang Csharp --code-dir ".." --proj-file-path "./MyBot.csproj"
+# The command would resolve --code-dir and --proj-file-path to "../MyBot.csproj"
+```
+
+*For Node.js bots:*
+```bash
+az bot prepare-deploy --code-dir ".." --lang Node
+```
+
+#### 4. Zip up the code directory manually
+When deploying the ARM template, if the parameter `"alwaysBuildOnDeploy"` was set to `true` then you do not need to include your binaries or the `node_modules` folder in the zipped code as Kudu will build your code or install the NPM packages.
+
+If it was set to `false` you must include the binaries and `node_modules` or the bot will not run when using zipdeploy. Note, the default value for this parameter is `false`.
+
+#### 5. Deploy code to Azure using `az webapp`
+
+```bash
 az webapp deployment source config-zip ...
 ```
+___
 
-### Inline ARM template ([link](/template-with-preexisting-group.json))
-
-```json
-{
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "appId": {
-            "type": "string"
-        },
-        "appSecret": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "botId": {
-            "type": "string"
-        },
-        "botSku": {
-            "defaultValue": "F0",
-            "type": "string"
-        },
-        "newServerFarmName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "newServerFarmSku": {
-            "type": "object",
-            "defaultValue": {
-                "name": "S1",
-                "tier": "Standard",
-                "size": "S1",
-                "family": "S",
-                "capacity": 1
-            }
-        },
-        "newServerFarmLocation": {
-            "type": "string",
-            "defaultValue": "westus"
-        },
-        "existingServerFarm": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "newWebAppName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "alwaysBuildOnDeploy": {
-            "type": "bool",
-            "defaultValue": "false",
-            "metadata": {
-                "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
-            }
-        }
-    },
-    "variables": {
-        "defaultServerName": "[if(empty(parameters('existingServerFarm')), 'createNewServer', parameters('existingServerFarm'))]",
-        "useExistingServerFarm": "[not(equals(variables('defaultServerName'), 'createNewServer'))]",
-        "serverFarmName": "[if(variables('useExistingServerFarm'), parameters('existingServerFarm'), parameters('newServerFarmName'))]",
-        "resourcesLocation": "[parameters('newServerFarmLocation')]",
-        "webAppName": "[if(empty(parameters('newWebAppName')), parameters('botId'), parameters('newWebAppName'))]",
-        "siteHost": "[concat(variables('webAppName'), '.azurewebsites.net')]",
-        "botEndpoint": "[concat('https://', variables('siteHost'), '/api/messages')]"
-    },
-    "resources": [
-        {
-            "comments": "Create a new Server Farm if no existing Server Farm name was passed in.",
-            "type": "Microsoft.Web/serverfarms",
-            "condition": "[not(variables('useExistingServerFarm'))]",
-            "name": "[variables('serverFarmName')]",
-            "apiVersion": "2018-02-01",
-            "location": "[variables('resourcesLocation')]",
-            "sku": "[parameters('newServerFarmSku')]",
-            "properties": {
-                "name": "[variables('serverFarmName')]"
-            }
-        },
-        {
-            "comments": "Create a Web App using a Server Farm",
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2015-08-01",
-            "location": "[variables('resourcesLocation')]",
-            "kind": "app",
-            "dependsOn": [
-                "[variables('serverFarmName')]"
-            ],
-            "name": "[variables('webAppName')]",
-            "properties": {
-                "name": "[variables('webAppName')]",
-                "serverFarmId": "[variables('serverFarmName')]",
-                "siteConfig": {
-                    "appSettings": [
-                        {
-                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "10.14.1"
-                        },
-                        {
-                            "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
-                            "value": "[parameters('alwaysBuildOnDeploy')]"
-                        },
-                        {
-                            "name": "MicrosoftAppId",
-                            "value": "[parameters('appId')]"
-                        },
-                        {
-                            "name": "MicrosoftAppPassword",
-                            "value": "[parameters('appSecret')]"
-                        }
-                    ],
-                    "cors": {
-                        "allowedOrigins": [
-                            "https://botservice.hosting.portal.azure.net",
-                            "https://hosting.onecloud.azure-test.net/"
-                        ]
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-12-01",
-            "type": "Microsoft.BotService/botServices",
-            "name": "[parameters('botId')]",
-            "location": "global",
-            "kind": "bot",
-            "sku": {
-                "name": "[parameters('botSku')]"
-            },
-            "properties": {
-                "name": "[parameters('botId')]",
-                "displayName": "[parameters('botId')]",
-                "endpoint": "[variables('botEndpoint')]",
-                "msaAppId": "[parameters('appId')]",
-                "developerAppInsightsApplicationId": null,
-                "developerAppInsightKey": null,
-                "publishingCredentials": null,
-                "storageResourceId": null
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites/', variables('webAppName'))]"
-            ]
-        }
-    ]
-}
-```
 
 ### Parameters:
 ```json
 "parameters": {
     "appId": {
-        "type": "string"
+        "type": "string",
+        "metadata": {
+            "description": "Active Directory App ID, set as MicrosoftAppId in the Web App's Application Settings."
+        }
     },
     "appSecret": {
         "type": "string",
-        "defaultValue": ""
+        "defaultValue": "",
+        "metadata": {
+            "description": "Active Directory App Password, set as MicrosoftAppPassword in the Web App's Application Settings. Defaults to \"\"."
+        }
     },
     "botId": {
-        "type": "string"
+        "type": "string",
+        "metadata": {
+            "description": "The globally unique and immutable bot ID. Also used to configure the displayName of the bot, which is mutable."
+        }
     },
     "botSku": {
         "defaultValue": "F0",
-        "type": "string"
+        "type": "string",
+        "metadata": {
+            "description": "The pricing tier of the Bot Service Registration. Acceptable values are F0 and S1."
+        }
     },
     "newServerFarmName": {
         "type": "string",
-        "defaultValue": ""
+        "defaultValue": "",
+        "metadata": {
+            "description": "The name of the new App Service Plan."
+        }
     },
     "newServerFarmSku": {
         "type": "object",
@@ -195,23 +129,35 @@ az webapp deployment source config-zip ...
             "size": "S1",
             "family": "S",
             "capacity": 1
+        },
+        "metadata": {
+            "description": "The SKU of the App Service Plan. Defaults to Standard values."
         }
     },
     "newServerFarmLocation": {
         "type": "string",
-        "defaultValue": "westus"
+        "defaultValue": "westus",
+        "metadata": {
+            "description": "The location of the App Service Plan. Defaults to \"westus\"."
+        }
     },
     "existingServerFarm": {
         "type": "string",
-        "defaultValue": ""
+        "defaultValue": "",
+        "metadata": {
+            "description": "Name of the existing App Service Plan/Server Farm used to create the Web App for the bot."
+        }
     },
     "newWebAppName": {
         "type": "string",
-        "defaultValue": ""
+        "defaultValue": "",
+        "metadata": {
+            "description": "The globally unique name of the Web App. Defaults to the value passed in for \"botId\"."
+        }
     },
     "alwaysBuildOnDeploy": {
         "type": "bool",
-        "defaultValue": "false",
+        "defaultValue": false,
         "metadata": {
             "comments": "Configures environment variable SCM_DO_BUILD_DURING_DEPLOYMENT on Web App. When set to true, the Web App will automatically build or install NPM packages when a deployment occurs."
         }
