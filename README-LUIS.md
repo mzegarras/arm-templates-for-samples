@@ -2,13 +2,18 @@
 
 This README contains information on how to create and deploy a LUIS application.
 
-Table of Contents:
+## Table of Contents:
+- [Prerequisites](#Prerequisites)
 - [Import a new LUIS Application using a local LUIS application](#Import-a-new-LUIS-Application-using-a-local-LUIS-application)
 - [How to create a LUIS Endpoint resource in Azure and pair it with a LUIS Application](#How-to-create-a-LUIS-Endpoint-resource-in-Azure-and-pair-it-with-a-LUIS-Application)
 
-## Import a new LUIS Application using a local LUIS application
+___
 
-## Prerequisites:
+## [Prerequisites](#Table-of-Contents):
+
+#### Install Azure CLI >=2.0.61:
+Visit the following page to find the correct installer for your OS:
+- https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
 
 #### Install LUIS CLI >=2.4.0:
 Open a CLI of your choice and type the following:
@@ -25,6 +30,8 @@ After you've created your account, you need your [Authoring Key][LUIS-AKey] and 
   [LUIS-AKey]: https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-concept-keys#authoring-key
 
 ___
+
+## [Import a new LUIS Application using a local LUIS application](#Table-of-Contents)
 
 ### 1. Import the local LUIS application to luis.ai
 ```bash
@@ -91,30 +98,7 @@ To see how to create an LUIS Cognitive Service Resource in Azure, please see [th
 
 ___
 
-## How to create a LUIS Endpoint resource in Azure and pair it with a LUIS Application
-
-### Prerequisites:
-
-#### Install Azure CLI >=2.0.61:
-Visit the following page to find the correct installer for your OS:
-- https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
-
-
-#### Install LUIS CLI >=2.4.0:
-Open a CLI of your choice and type the following:
-```bash
-npm i -g luis-apis@^2.4.0
-```
-
-#### LUIS portal account:
-You should already have a LUIS account with either https://luis.ai, https://eu.luis.ai, or https://au.luis.ai. To determine where to create a LUIS account, consider where you will deploy your LUIS applications, and then place them in [the corresponding region][LUIS-Authoring-Regions].
-
-After you've created your account, you need your [Authoring Key][LUIS-AKey] and a LUIS application ID.
-
-  [LUIS-Authoring-Regions]: https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-regions#luis-authoring-regions]
-  [LUIS-AKey]: https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-concept-keys#authoring-key
-
-___
+## [How to create a LUIS Endpoint resource in Azure and pair it with a LUIS Application](#Table-of-Contents)
 
 ### 1. Create a new LUIS Cognitive Services resource on Azure via Azure CLI
 
@@ -209,6 +193,3 @@ This will return an object that looks like this:
   "key2": "####f99e####4b1a####fb3b####6b9f"
 }
 ```
-
-  [LUIS-NPM]: https://www.npmjs.com/package/luis-apis
-
