@@ -293,7 +293,7 @@ This command will output JSON with the key "appId", save the value of this key f
 ```bash
 # Pass in the path to the ARM template for the --template-file argument.
 # The argument for --template-file comes from the name of the templates located in the same folder as this README.
-az group deployment create --name "<name-of-deployment>" --resource-group "<name-of-resource-group>" --template-file "template-existing-group.json" --subscription "<subscription-guid>" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newWebAppName="<name-of-web-app>" alwaysBuildOnDeploy=false newServerFarmName="<name-of-server-farm>"
+az group deployment create --name "<name-of-deployment>" --resource-group "<name-of-resource-group>" --template-file "template-with-preexisting-rg.json" --subscription "<subscription-guid>" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newWebAppName="<name-of-web-app>" alwaysBuildOnDeploy=false newServerFarmName="<name-of-server-farm>"
 ```
 
 ##### Command with preexisting App Service Plan/Server Farm:
@@ -304,7 +304,7 @@ az group deployment create --name "<name-of-deployment>" --resource-group "<name
 # If both parameters are passed in, the ARM template provided will try to create a new Web App on the "existingServerFarm".
 # Pass in the path to the ARM template for the --template-file argument.
 # The argument for --template-file comes from the name of the templates located in the same folder as this README.
-az group deployment create --name "<name-of-deployment>" --resource-group "<name-of-resource-group>" --template-file "template-existing-group.json" --subscription "<subscription-guid>" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newWebAppName="<name-of-web-app>" alwaysBuildOnDeploy=false existingServerFarm="<name-of-server-farm>"
+az group deployment create --name "<name-of-deployment>" --resource-group "<name-of-resource-group>" --template-file "template-with-preexisting-rg.json" --subscription "<subscription-guid>" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newWebAppName="<name-of-web-app>" alwaysBuildOnDeploy=false existingServerFarm="<name-of-server-farm>"
 ```
 
 > These instructions shows how to zipdeploy your code using `az webapp`. App Service's default behavior for zipdeploy is to not build the code or install any dependencies (e.g. you must zip up your binaries or your `node_modules` folder). If you do want the App service to build and/or install dependencies, add the optional parameter `"
