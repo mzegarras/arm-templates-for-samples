@@ -2,11 +2,11 @@
 
 This README contains information on how to deploy your local bot to Azure.
 
-Table of Contents:
+## Table of Contents:
 
 - [Prerequisites](#Prerequisites)
-- [Deploying via ARM template (with new Resource Group)](#Deploying-via-ARM-template-(with-new-Resource-Group))
-- [Deploying via ARM template (with preexisting Resource Group)](#Deploying-via-ARM-template-(with-preexisting-Resource-Group))
+- [Deploying via ARM template (with new Resource Group)](#deploying-via-arm-template-with-new-resource-group)
+- [Deploying via ARM template (with preexisting Resource Group)](#deploying-via-arm-template-with-preexisting-resource-group)
 
 ___
 
