@@ -48,15 +48,17 @@ This command will output JSON with the key "appId", save the value of this key f
   [Preview-Portal]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade
 
 #### 2. Create a resource group and the Azure resources
+> *Note: The `botId` parameter should be globally unique and is used as the immutable bot ID. Also used to configure the displayName of the bot, which is mutable.*
+
 ```bash
 # Pass in the path to the ARM template for the --template-file argument.
 # The argument for --template-file comes from the name of the templates located in the same folder as this README.
 az deployment create --name "<name-of-deployment>" --template-file "template-with-new-rg.json" --subscription "<subscription-guid>" --location "westus" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newServerFarmName="<name-of-server-farm>" newWebAppName="<name-of-web-app>" groupName="<new-group-name>" alwaysBuildOnDeploy=true
 ```
 
-> These instructions shows how to zipdeploy your code using `az webapp`. App Service's default behavior for zipdeploy is to not build the code or install any dependencies (e.g. you must zip up your binaries or your `node_modules` folder). If you do want the App service to build and/or install dependencies, add the optional parameter `"
+> *These instructions shows how to zipdeploy your code using `az webapp`. App Service's default behavior for zipdeploy is to not build the code or install any dependencies (e.g. you must zip up your binaries or your `node_modules` folder). If you do want the App service to build and/or install dependencies, add the optional parameter `"*
 >
-> For more information on Kudu, visit their [GitHub repository][Kudu-Wiki].
+> *For more information on Kudu, visit their [GitHub repository][Kudu-Wiki].*
 
 To see all available ARM template parameters and their descriptions, scroll down or click [here](#ARM-Template-Parameters-(new-Resource-Group)).
 
@@ -115,7 +117,6 @@ ___
     },
     "appSecret": {
         "type": "string",
-        "defaultValue": "",
         "metadata": {
             "description": "Active Directory App Password, set as MicrosoftAppPassword in the Web App's Application Settings. Defaults to \"\"."
         }
@@ -209,6 +210,8 @@ This command will output JSON with the key "appId", save the value of this key f
 
 #### 2. Create a resource group and the Azure resources
 
+> *Note: The `botId` parameter should be globally unique and is used as the immutable bot ID. Also used to configure the displayName of the bot, which is mutable.*
+
 ##### Command with new App Service Plan/Server Farm:
 ```bash
 # Pass in the path to the ARM template for the --template-file argument.
@@ -224,12 +227,13 @@ az group deployment create --name "<name-of-deployment>" --resource-group "<name
 # If both parameters are passed in, the ARM template provided will try to create a new Web App on the "existingServerFarm".
 # Pass in the path to the ARM template for the --template-file argument.
 # The argument for --template-file comes from the name of the templates located in the same folder as this README.
+
 az group deployment create --name "<name-of-deployment>" --resource-group "<name-of-resource-group>" --template-file "template-with-preexisting-rg.json" --subscription "<subscription-guid>" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="<id-or-name-of-bot>" newWebAppName="<name-of-web-app>" alwaysBuildOnDeploy=false existingServerFarm="<name-of-server-farm>"
 ```
 
-> These instructions shows how to zipdeploy your code using `az webapp`. App Service's default behavior for zipdeploy is to not build the code or install any dependencies (e.g. you must zip up your binaries or your `node_modules` folder). If you do want the App service to build and/or install dependencies, add the optional parameter `"
+> *These instructions shows how to zipdeploy your code using `az webapp`. App Service's default behavior for zipdeploy is to not build the code or install any dependencies (e.g. you must zip up your binaries or your `node_modules` folder). If you do want the App service to build and/or install dependencies, add the optional parameter `"*
 >
-> For more information on Kudu, visit their [GitHub repository][Kudu-Wiki].
+> *For more information on Kudu, visit their [GitHub repository][Kudu-Wiki].*
 
 To see all available ARM template parameters and their descriptions, scroll down or click [here](#ARM-Template-Parameters-(preexisting-Resource-Group)).
 
@@ -275,7 +279,6 @@ ___
     },
     "appSecret": {
         "type": "string",
-        "defaultValue": "",
         "metadata": {
             "description": "Active Directory App Password, set as MicrosoftAppPassword in the Web App's Application Settings. Defaults to \"\"."
         }
