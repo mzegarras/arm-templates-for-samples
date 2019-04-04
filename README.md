@@ -4,12 +4,21 @@ This README contains information on how to deploy your local bot to Azure.
 
 Table of Contents:
 
+- [Prerequisites](#Prerequisites)
 - [Deploying via ARM template (with new Resource Group)](#Deploying-via-ARM-template-(with-new-Resource-Group))
 - [Deploying via ARM template (with preexisting Resource Group)](#Deploying-via-ARM-template-(with-preexisting-Resource-Group))
 
 ___
 
-## Deploying via ARM template (with new Resource Group)
+## [Prerequisites](#Table-of-Contents):
+
+#### Install Azure CLI >=2.0.61:
+Visit the following page to find the correct installer for your OS:
+- https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
+
+___
+
+## [Deploying via ARM template (with new Resource Group)](#Table-of-Contents)
 
 We recommend provisioning Azure resources through ARM templates via the [Azure CLI][ARM-CLI]. It is also possible to deploy ARM templates via the [Azure Portal][ARM-Portal], [PowerShell][ARM-PowerShell] and the [REST API][ARM-REST].
 
@@ -22,9 +31,6 @@ To install the latest version of the Azure CLI visit [this page][Install-CLI].
   [Install-CLI]: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
 
 ___
-
-## Bot deployment via Azure CLI
-When deploying an ARM template via the Azure CLI, you will perform the following actions:
 
 #### 1. Create an App registration
 To create an App registration via the Azure CLI, perform the following command:
@@ -172,7 +178,7 @@ ___
 
 ___
 
-## Deploying via ARM template (with preexisting Resource Group)
+## [Deploying via ARM template (with preexisting Resource Group)](#Table-of-Contents)
 
 We recommend provisioning Azure resources through ARM templates via the [Azure CLI][ARM-CLI]. It is also possible to deploy ARM templates via the [Azure Portal][ARM-Portal], [PowerShell][ARM-PowerShell] and the [REST API][ARM-REST].
 
@@ -185,9 +191,6 @@ To install the latest version of the Azure CLI visit [this page][Install-CLI].
   [Install-CLI]: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
 
 ___
-
-## Bot deployment via Azure CLI
-When deploying an ARM template via the Azure CLI, you will perform the following actions:
 
 #### 1. Create an App registration
 To create an App registration via the Azure CLI, perform the following command:
